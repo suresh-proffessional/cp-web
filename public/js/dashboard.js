@@ -3,5 +3,5 @@
 // =================================================================================
 $(document).on('ready', function () {
     console.log('dashboard.js file loaded successfully!!');
-    $('h3').append(' - Test');
+    $('h3.dashheading').append(' - Test');
 });
