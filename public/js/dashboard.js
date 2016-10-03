@@ -47,11 +47,11 @@ function connect_to_server() {
         connected = true;
         //clear_blocks();
         //$("#errorNotificationPanel").fadeOut();
-        ws.send(JSON.stringify({type: "chainstats", v: 2, user: user.username}));
+        /*ws.send(JSON.stringify({type: "chainstats", v: 2, user: user.username}));
         ws.send(JSON.stringify({type: "get_papers", v: 2, user: user.username}));
         if (user.name && user.role !== "auditor") {
             ws.send(JSON.stringify({type: 'get_company', company: user.name, user: user.username}));
-        }
+        }*/
     }
 
     function onClose(evt) {
