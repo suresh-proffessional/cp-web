@@ -100,7 +100,7 @@ $(document).on('ready', function () {
 	$("#chaininfo").html("");
 	$("#blockinfo").html("");
         //send chainstats request
-	ws.send(JSON.stringify({type: "dashboardchainstats", v: 2, user: user.username}));
+	ws.send(JSON.stringify({type: "dchainstats", v: 2, user: user.username}));
     });
 
     //login events
@@ -264,7 +264,7 @@ function connect_to_server() {
 					console.log('cannot parse papers', e);
 				}
 			}
-			else if (data.msg === 'dashboardchainstats') {
+			else if (data.msg === 'dchainstats') {
 				console.log(JSON.stringify(data));
 				$("#chaininfo").html(data.chainstats);
 				$("#blockinfo").append("<br/>" + data.blockstats);
