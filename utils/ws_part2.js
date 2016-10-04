@@ -98,7 +98,8 @@ module.exports.process_msg = function (ws, data) {
                     console.log(util.format("Failed to submit chaincode invoke transaction: request=%j, error=%j", Request, err));
                 });
             } else if (data.type == 'dashboardchainstats') {
-                var options = {
+                sendMsg({ msg: 'dashboardchainstats', e: e, chainstats: "helloChain", blockstats: "helloBlock" });
+                /*var options = {
                     host: peers[0],
                     port: '443',
                     path: '/chain',
@@ -142,7 +143,7 @@ module.exports.process_msg = function (ws, data) {
                     failure(408, null, 'Request timed out');
                 });
 
-                request.end();
+                request.end();*/
             } else if (data.type == 'chainstats') {
                 var options = {
                     host: peers[0],
