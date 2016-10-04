@@ -54,7 +54,7 @@ router.route("/audit").get(function (req, res) {
 
 router.route("/dashboard").get(function (req, res) {
     check_login(res, req);
-    res.render('dashboard', {title: 'Dashboard', bag: {setup: setup, e: process.error, session: req.session}});
+    res.render('part2', {title: 'Commercial Paper Demo', bag: {setup: setup, e: process.error, session: req.session}});
 });
 
 router.route("/login").get(function (req, res) {
