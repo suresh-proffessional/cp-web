@@ -48,6 +48,7 @@ $(document).on('ready', function () {
         } else if (user.username) {
             $("#createLink").show();
             $("#tradeLink").show();
+	    $("#dashboardLink").show();
         }
     } else {
 
@@ -92,6 +93,11 @@ $(document).on('ready', function () {
 
     $("#tradeLink").click(function () {
         ws.send(JSON.stringify({type: "get_open_trades", v: 2, user: user.username}));
+    });
+	
+    $("#tradeLink").click(function () {
+        //send chainstats request
+	$("#blockChainInfo").html("Hello, Welcome to Dashboard!! - " + new Date().toLocaleString());
     });
 
     //login events
