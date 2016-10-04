@@ -97,6 +97,8 @@ $(document).on('ready', function () {
 	
     $("#dashboardLink").click(function () {
 	$("#welcomeMsg").html("Hello, Welcome to Dashboard!! - " + new Date().toLocaleString() + "<br/><br/>");
+	$("#chaininfo").html("");
+	$("#blockinfo").html("");
         //send chainstats request
 	ws.send(JSON.stringify({type: "dashboardchainstats", v: 2, user: user.username}));
     });
@@ -263,7 +265,9 @@ function connect_to_server() {
 				}
 			}
 			else if (data.msg === 'dashboardchainstats') {
-				
+				console.log(JSON.stringify(data));
+				$("#chaininfo").html(data.chainstats);
+				$("#blockinfo").append("<br/>" + data.blockstats);
 			}
 			else if (data.msg === 'chainstats') {
 				console.log(JSON.stringify(data));
