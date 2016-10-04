@@ -96,7 +96,7 @@ $(document).on('ready', function () {
     });
 	
     $("#dashboardLink").click(function () {
-	$("#blockChainInfo").html("Hello, Welcome to Dashboard!! - " + new Date().toLocaleString() + "<br/><br/>");
+	$("#welcomeMsg").html("Hello, Welcome to Dashboard!! - " + new Date().toLocaleString() + "<br/><br/>");
         //send chainstats request
 	ws.send(JSON.stringify({type: "dashboardchainstats", v: 2, user: user.username}));
     });
