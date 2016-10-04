@@ -262,6 +262,9 @@ function connect_to_server() {
 					console.log('cannot parse papers', e);
 				}
 			}
+			else if (data.msg === 'dashboardchainstats') {
+				
+			}
 			else if (data.msg === 'chainstats') {
 				console.log(JSON.stringify(data));
 				var e = formatDate(data.blockstats.transactions[0].timestamp.seconds * 1000, '%M/%d/%Y &nbsp;%I:%m%P');
