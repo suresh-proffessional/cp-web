@@ -97,8 +97,8 @@ module.exports.process_msg = function (ws, data) {
                     // Invoke transaction submission failed
                     console.log(util.format("Failed to submit chaincode invoke transaction: request=%j, error=%j", Request, err));
                 });
-            } else if (data.type == 'dashboardchainstats') {
-                sendMsg({ msg: 'dashboardchainstats', e: e, chainstats: "helloChain", blockstats: "helloBlock" });
+            } else if (data.type == 'dchainstats') {
+                sendMsg({ msg: 'dchainstats', e: e, chainstats: "helloChain", blockstats: "helloBlock" });
                 /*var options = {
                     host: peers[0],
                     port: '443',
@@ -107,7 +107,7 @@ module.exports.process_msg = function (ws, data) {
                 };
 
                 function success(statusCode, headers, resp) {
-                    cb_dashboardchainstats(null, JSON.parse(resp));
+                    cb_dchainstats(null, JSON.parse(resp));
                 };
                 function failure(statusCode, headers, msg) {
                     console.log('status code: ' + statusCode);
@@ -237,7 +237,7 @@ module.exports.process_msg = function (ws, data) {
             //call back for getting the blockchain stats, lets get the block height now
             var dashboard_chain_stats = {};
 
-            function cb_dashboardchainstats(e, stats) {
+            function cb_dchainstats(e, stats) {
                 dashboard_chain_stats = stats;
                 if (stats && stats.height) {
                     var list = [];
@@ -259,7 +259,7 @@ module.exports.process_msg = function (ws, data) {
                         function success(statusCode, headers, stats) {
                             stats = JSON.parse(stats);
                             stats.height = key;
-                            sendMsg({ msg: 'dashboardchainstats', e: e, chainstats: dashboard_chain_stats, blockstats: stats });
+                            sendMsg({ msg: 'dchainstats', e: e, chainstats: dashboard_chain_stats, blockstats: stats });
                             cb(null);
                         };
 
