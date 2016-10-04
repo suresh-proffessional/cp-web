@@ -97,8 +97,53 @@ module.exports.process_msg = function (ws, data) {
                     // Invoke transaction submission failed
                     console.log(util.format("Failed to submit chaincode invoke transaction: request=%j, error=%j", Request, err));
                 });
-            }
-            else if (data.type == 'chainstats') {
+            } else if (data.type == 'dashboardchainstats') {
+                var options = {
+                    host: peers[0],
+                    port: '443',
+                    path: '/chain',
+                    method: 'GET'
+                };
+
+                function success(statusCode, headers, resp) {
+                    cb_dashboardchainstats(null, JSON.parse(resp));
+                };
+                function failure(statusCode, headers, msg) {
+                    console.log('status code: ' + statusCode);
+                    console.log('headers: ' + headers);
+                    console.log('message: ' + msg);
+                };
+
+                var goodJSON = false;
+                var request = https.request(options, function (resp) {
+                    var str = '', temp, chunks = 0;
+
+                    resp.setEncoding('utf8');
+                    resp.on('data', function (chunk) {															//merge chunks of request
+                        str += chunk;
+                        chunks++;
+                    });
+                    resp.on('end', function () {																	//wait for end before decision
+                        if (resp.statusCode == 204 || resp.statusCode >= 200 && resp.statusCode <= 399) {
+                            success(resp.statusCode, resp.headers, str);
+                        }
+                        else {
+                            failure(resp.statusCode, resp.headers, str);
+                        }
+                    });
+                });
+
+                request.on('error', function (e) {																//handle error event
+                    failure(500, null, e);
+                });
+
+                request.setTimeout(20000);
+                request.on('timeout', function () {																//handle time out event
+                    failure(408, null, 'Request timed out');
+                });
+
+                request.end();
+            } else if (data.type == 'chainstats') {
                 var options = {
                     host: peers[0],
                     port: '443',
@@ -187,7 +232,77 @@ module.exports.process_msg = function (ws, data) {
             function cb_invoked(e, a) {
                 console.log('response: ', e, a);
             }
+            
+            //call back for getting the blockchain stats, lets get the block height now
+            var dashboard_chain_stats = {};
 
+            function cb_dashboardchainstats(e, stats) {
+                dashboard_chain_stats = stats;
+                if (stats && stats.height) {
+                    var list = [];
+                    for (var i = stats.height - 1; i >= 1; i--) {								//create a list of heights we need
+                        list.push(i);
+                        if (list.length >= 8) break;
+                    }
+
+                    list.reverse();
+                    async.eachLimit(list, 1, function (key, cb) {							//iter through each one, and send it
+                        //get chainstats through REST API
+                        var options = {
+                            host: peers[0],
+                            port: '443',
+                            path: '/chain/blocks/' + key,
+                            method: 'GET'
+                        };
+
+                        function success(statusCode, headers, stats) {
+                            stats = JSON.parse(stats);
+                            stats.height = key;
+                            sendMsg({ msg: 'dashboardchainstats', e: e, chainstats: dashboard_chain_stats, blockstats: stats });
+                            cb(null);
+                        };
+
+                        function failure(statusCode, headers, msg) {
+                            console.log('chainstats block ' + key + ' failure :(');
+                            console.log('status code: ' + statusCode);
+                            console.log('headers: ' + headers);
+                            console.log('message: ' + msg);
+                            cb(null);
+                        };
+
+                        var goodJSON = false;
+                        var request = https.request(options, function (resp) {
+                            var str = '', temp, chunks = 0;
+                            resp.setEncoding('utf8');
+                            resp.on('data', function (chunk) {															//merge chunks of request
+                                str += chunk;
+                                chunks++;
+                            });
+                            resp.on('end', function () {
+                                if (resp.statusCode == 204 || resp.statusCode >= 200 && resp.statusCode <= 399) {
+                                    success(resp.statusCode, resp.headers, str);
+                                }
+                                else {
+                                    failure(resp.statusCode, resp.headers, str);
+                                }
+                            });
+                        });
+
+                        request.on('error', function (e) {																//handle error event
+                            failure(500, null, e);
+                        });
+
+                        request.setTimeout(20000);
+                        request.on('timeout', function () {																//handle time out event
+                            failure(408, null, 'Request timed out');
+                        });
+
+                        request.end();
+                    }, function () {
+                    });
+                }
+            }
+            
             //call back for getting the blockchain stats, lets get the block height now
             var chain_stats = {};
 
