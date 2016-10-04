@@ -95,7 +95,7 @@ $(document).on('ready', function () {
         ws.send(JSON.stringify({type: "get_open_trades", v: 2, user: user.username}));
     });
 	
-    $("#tradeLink").click(function () {
+    $("#dashboardLink").click(function () {
         //send chainstats request
 	$("#blockChainInfo").html("Hello, Welcome to Dashboard!! - " + new Date().toLocaleString());
     });
